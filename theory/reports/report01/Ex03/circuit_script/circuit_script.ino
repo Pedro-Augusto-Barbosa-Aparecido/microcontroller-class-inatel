@@ -11,6 +11,8 @@
 #define TURN_OFF_BUTTON (1 << PC1)
 #define LAMP (1 << PD3)
 
+bool isSystemRunning = false;
+
 void turnOn(int qtdPins, ...) {
   int pinsToTurnOn = 0b00000000;
 
@@ -49,12 +51,31 @@ void blinkLamp() {
   turnOff(1, LAMP);
 }
 
+ISR(PCINT1_vect) {
+  if (!(PINC & TURN_OFF_BUTTON)) {
+    turnOff(
+      4,
+      MOTOR_ELEVATOR, 
+      MOTOR_TRANSPORTER_TO_ELEVATOR, 
+      MOTOR_TRANSPORTER_TO_VERIFICATION,
+      LAMP
+    );
+
+    isSystemRunning = false;
+  }
+}
+
 int main() {
   // define outputs
   DDRD = MOTOR_ELEVATOR + MOTOR_TRANSPORTER_TO_ELEVATOR + MOTOR_TRANSPORTER_TO_VERIFICATION + LAMP;
 
   // pull up on turn off button
   PORTC = TURN_OFF_BUTTON;
+
+  // config interrupt in PORTC
+  PCICR |= (1 << PCIE1);
+
+  PCMSK1 |= (1 << PCINT9);
 
   // set outputs as turned off by default
   turnOff(
@@ -65,7 +86,7 @@ int main() {
     LAMP
   );
 
-  bool isSystemRunning = false;
+  sei();
 
   for (;;) {
     short int isTurnOnButtonPressed = PINC & TURN_ON_BUTTON;
@@ -127,7 +148,7 @@ int main() {
         MOTOR_TRANSPORTER_TO_VERIFICATION
       );
 
-      while ((PINB & SENSOR_THREE) == SENSOR_THREE) 
+      while ((PINB & SENSOR_THREE) == SENSOR_THREE && isSystemRunning) 
         blinkLamp();
     } else if (isSensorFourActivated == SENSOR_FOUR && isSystemRunning) {
       turnOff(
