@@ -36,11 +36,11 @@ ISR(TIMER0_COMPA_vect) {
         }
       }
     }
-  }
 
-  Serial.print(hora);
-  Serial.print(":");
-  Serial.print(minutes);
-  Serial.print(":");
-  Serial.println(seconds);
+    Serial.print(hour);
+    Serial.print(":");
+    Serial.print(minutes);
+    Serial.print(":");
+    Serial.println(seconds);
+  }
 }
