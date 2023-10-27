@@ -4,7 +4,7 @@
 #define MOTOR (1 << PD6)
 
 int calcDutCyclePercentage(int percentage) {
-  return (int)((255 * percentage) / 100); 
+  return (int)((255 * percentage) / 100);
 }
 
 int counter = 0;
@@ -18,12 +18,12 @@ const short int THIRTY_FIVE_PERCENTAGE = calcDutCyclePercentage(35);
 const short int TEN_PERCENTAGE = calcDutCyclePercentage(10);
 const short int SEVENTY_FIVE_PERCENTAGE = calcDutCyclePercentage(75);
 
-const int timeFromCribZeroToOne = 4000; // 4 seconds
-const int timeFromCribOneToTwo = 3000; // 3 seconds
-const int timeFromCribTwoToThree = 2000; // 2 seconds
-const int timeFromCribThreeToFour = 6000; // 6 seconds
-const int timeFromCribFourToFive = 5000; // 5 seconds
-const int timeOfDrillTurnOn = 4000; // 4 segundos
+const int timeFromCribZeroToOne = 4000;    // 4 seconds
+const int timeFromCribOneToTwo = 3000;     // 3 seconds
+const int timeFromCribTwoToThree = 2000;   // 2 seconds
+const int timeFromCribThreeToFour = 6000;  // 6 seconds
+const int timeFromCribFourToFive = 5000;   // 5 seconds
+const int timeOfDrillTurnOn = 4000;        // 4 segundos
 
 int currentOCR0A = 0;
 
@@ -37,22 +37,23 @@ void turnOnDrill() {
     Serial.println(currentCrib);
   }
 
-  // switch (currentCrib) {
-  //   case 1:
-  //     break; 
-  //   case 2:
-  //     OCR0A = EIGHTY_PERCENTAGE;
-  //     break; 
-  //   case 3:
-  //     OCR0A = THIRTY_FIVE_PERCENTAGE;
-  //     break; 
-  //   case 4:
-  //     OCR0A = TEN_PERCENTAGE;
-  //     break; 
-  //   case 5:
-  //     OCR0A = SEVENTY_FIVE_PERCENTAGE;
-  //     break; 
-  // }
+  switch (currentCrib) {
+    case 1:
+      OCR0A = FOURTY_PERCENTAGE;
+      break;
+    case 2:
+      OCR0A = EIGHTY_PERCENTAGE;
+      break;
+    case 3:
+      OCR0A = THIRTY_FIVE_PERCENTAGE;
+      break;
+    case 4:
+      OCR0A = TEN_PERCENTAGE;
+      break;
+    case 5:
+      OCR0A = SEVENTY_FIVE_PERCENTAGE;
+      break;
+  }
 
   // PORTD |= MOTOR;
 }
@@ -72,38 +73,38 @@ void turnOffDrill() {
 int main() {
   Serial.begin(115200);
   DDRD |= MOTOR;
-  PORTD &= ~MOTOR;
+  // PORTD &= ~MOTOR;
 
   // configure timer 0 works as comparator
-  TCCR0A |= (1 << COM0A1) | (1 << WGM01) + (1 << WGM00); // pwm mode
-  TCCR0B |= (1 << CS02) | (1 << CS00); // configure prescaler 1024
-  OCR0A = 0; // 250 counts of 4us -> 1ms delay
-  TIMSK0 = (1 << OCIE0A); // enable interrupt on comparator A of timer 0
+  TCCR2A = (1 << COM2A1) + (1 << WGM21) + (1 << WGM20);  // pwm mode
+  TCCR2B = (1 << CS22) + (1 << CS20);                    // configure prescaler 1024
+  // OCR0A = 0; // 250 counts of 4us -> 1ms delay
+  TIMSK2 = (1 << OCIE2A);  // enable interrupt on comparator A of timer 0
 
   // configure timer 2 works as comparator
-  TCCR2A = (1 << WGM21) + (0 << WGM20); // comparator mode
-  TCCR2B = (1 << CS21) + (1 << CS20); // configure prescaler timer 2
+  TCCR0A = (1 << WGM01) + (0 << WGM00);  // comparator mode
+  TCCR0B = (1 << CS01) + (1 << CS00);    // configure prescaler timer 2
   /*
     PreScaler: 64
     Frequency: 250KHz
     Period of each count: 4us
   */
 
-  OCR2A = 249; // 250 counts of 4us -> 1ms delay
-  TIMSK2 = (1 << OCIE2A); // enable interrupt on comparator A of timer 0
+  OCR0A = 249;             // 250 counts of 4us -> 1ms delay
+  TIMSK0 = (1 << OCIE0A);  // enable interrupt on comparator A of timer 0
 
   PCICR = (1 << PCIE1);
   PCMSK1 |= BI_MANUAL_1 + BI_MANUAL_2;
 
   sei();
   for (;;) {
-    OCR0A = currentOCR0A;
+    // OCR0A = currentOCR0A;
 
-    if ((counter % 500) == 0) {
-      
-    Serial.print("Current OCR0A: ");
-    Serial.println(OCR0A);
-    }
+    // if ((counter % 500) == 0) {
+
+    // Serial.print("Current OCR0A: ");
+    // Serial.println(OCR0A);
+    // }
   }
 }
 
@@ -118,19 +119,19 @@ ISR(PCINT1_vect) {
       counter = 0;
       Serial.println("Entrou no inicio");
     }
-      
-    // Serial.print("Current crib: ");
-    // Serial.println(currentCrib);
-    // Serial.print("Counter: ");
-    // Serial.println(counter);
+
+    Serial.print("Current crib: ");
+    Serial.println(currentCrib);
+    Serial.print("Counter: ");
+    Serial.println(counter);
   } else {
-    OCR0A = 0;
+    // OCR0A = 0;
     currentCrib = 0;
   }
 }
 
 // interrupt happened each 1ms
-ISR(TIMER2_COMPA_vect) {
+ISR(TIMER0_COMPA_vect) {
   counter += 1;
   bool isCribOne = currentCrib == 1 && (counter == timeFromCribZeroToOne);
   bool isCribTwo = currentCrib == 2 && (counter == timeFromCribOneToTwo || isDrillAlreadyInCrib);
@@ -143,11 +144,11 @@ ISR(TIMER2_COMPA_vect) {
   // Serial.print("Counter: ");
   // Serial.println(counter);
 
-  // currentOCR0A = EIGHTY_PERCENTAGE;
-
-  if ((counter % 1000) == 0) {
-    // Serial.print("Counter ,: ");
-    // Serial.println(counter);
+  // currentOCR0A = TEN_PERCENTAGE;
+  // Serial.println(counter);
+  if ((counter % 4000) == 0) {
+    Serial.print("Counter ,: ");
+    Serial.println(counter);
     // PORTD |= MOTOR;
   }
 

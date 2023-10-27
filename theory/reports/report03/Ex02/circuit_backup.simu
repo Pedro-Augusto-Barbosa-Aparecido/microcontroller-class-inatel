@@ -108,8 +108,8 @@ Unique  Id: Connector-37:
 Circuit Id: Connector-37
 <item enodeid="Circ_eNode-53" hflip="1" Show_id="false" labelrot="0" pointList="-16,-360,-8,-360" rotation="0" labelx="-16" circPos="0,0" valLabelx="0" boardRot="-1000000" y="-360" startpinid="Node-36-2" endpinid="Switch-12-switch0pinN" objectName="Connector-37" id="Connector-37" vflip="1" x="-16" boardPos="-1e+06,-1e+06" valLabely="0" circRot="0" itemtype="Connector" valLabRot="0" mainComp="false" labely="-24"/>
 
-Unique  Id: Connector-45: 
-Circuit Id: Connector-45
-<item enodeid="Circ_eNode-54" hflip="1" Show_id="false" labelrot="0" pointList="-188,-248,-128,-248" rotation="0" labelx="-16" circPos="0,0" valLabelx="0" boardRot="-1000000" y="-248" startpinid="DcMotor-2-lPin" endpinid="atmega328-1-PD6" objectName="Connector-45" id="Connector-45" vflip="1" x="-188" boardPos="-1e+06,-1e+06" valLabely="0" circRot="0" itemtype="Connector" valLabRot="0" mainComp="false" labely="-24"/>
+Unique  Id: Connector-55: 
+Circuit Id: Connector-55
+<item enodeid="enode-55" hflip="1" Show_id="false" labelrot="0" pointList="-188,-248,-152,-248,-152,-304,-128,-304" rotation="0" labelx="-16" circPos="0,0" valLabelx="0" boardRot="-1000000" y="-248" startpinid="DcMotor-2-lPin" endpinid="atmega328-1-PD3" objectName="Connector-55" id="Connector-55" vflip="1" x="-188" boardPos="-1e+06,-1e+06" valLabely="0" circRot="0" itemtype="Connector" valLabRot="0" mainComp="false" labely="-24"/>
  
 </circuit>
